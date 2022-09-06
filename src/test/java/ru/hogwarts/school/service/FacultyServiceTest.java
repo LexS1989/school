@@ -1,84 +1,89 @@
 package ru.hogwarts.school.service;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 class FacultyServiceTest {
 
-    private final FacultyService out = new FacultyService();
+    @Mock
+    private FacultyRepository facultyRepository;
+
+    @InjectMocks
+    private FacultyService out;
 
     @Test
     public void addFacultyTest() {
-        Faculty expected = new Faculty(1, "Gryffindor", "red");
-        Faculty faculty = new Faculty(1, "Gryffindor", "red");
-        Assertions.assertThat(out.addFaculty(faculty))
+        Faculty faculty = new Faculty(1L, "Gryffindor", "red");
+        Faculty expected = new Faculty(1L,"Gryffindor", "red");
+        when(facultyRepository.save(faculty))
+                .thenReturn(faculty);
+        assertThat(out.addFaculty(faculty))
                 .isEqualTo(expected);
     }
 
     @Test
     public void findFacultyTest() {
-        Faculty expected = new Faculty(2, "Slytherin", "green");
-        Faculty faculty1 = new Faculty(1, "Gryffindor", "red");
-        Faculty faculty2 = new Faculty(2, "Slytherin", "green");
-        out.addFaculty(faculty1);
-        out.addFaculty(faculty2);
-        Assertions.assertThat(out.findFaculty(2))
+        Faculty faculty = new Faculty(2L, "Slytherin", "green");
+        Faculty expected = new Faculty(2L, "Slytherin", "green");
+        ;
+        when(facultyRepository.findById(2L))
+                .thenReturn(Optional.of(faculty));
+        assertThat(out.findFaculty(2L))
                 .isEqualTo(expected);
+    }
+
+    @Test
+    public void findFacultyNegativeTest() {
+        when(facultyRepository.findById(1L))
+                .thenReturn(Optional.empty());
+        assertThat(out.findFaculty(1L))
+                .isNull();
     }
 
     @Test
     public void editFacultyPositiveTest() {
-        Faculty faculty1 = new Faculty(1, "Gryffindor", "red");
-        Faculty faculty2 = new Faculty(2, "Sly", "green");
+        Faculty faculty = new Faculty(2, "Slyth", "green");
         Faculty expected = new Faculty(2, "Slytherin", "green");
         Faculty edit = new Faculty(2, "Slytherin", "green");
-        out.addFaculty(faculty1);
-        out.addFaculty(faculty2);
-        Assertions.assertThat(out.editFaculty(2, edit))
+        when(facultyRepository.save(faculty))
+                .thenReturn(edit);
+        assertThat(out.editFaculty(faculty))
                 .isEqualTo(expected);
-
-    }
-
-    @Test
-    public void editFacultyNegativeTest() {
-        Faculty faculty = new Faculty(1, "Gryffindor", "red");
-        out.addFaculty(faculty);
-        Assertions.assertThat(out.editFaculty(2, faculty))
-                .isNull();
     }
 
     @Test
     public void deleteFacultyTest() {
-        Faculty faculty1 = new Faculty(1, "Gryffindor", "red");
-        Faculty faculty2 = new Faculty(2, "Slytherin", "green");
-        out.addFaculty(faculty1);
-        out.addFaculty(faculty2);
-        Assertions.assertThat(out.findFaculty(2))
-                .isNotNull();
-        out.deleteFaculty(2);
-        Assertions.assertThat(out.findFaculty(2))
-                .isNull();
+        out.deleteFaculty(1L);
+        verify(facultyRepository, only()).deleteById(1L);
     }
 
     @Test
-    public void findByColorTest() {
+    public void findByAgeTest() {
         List<Faculty> expected = new ArrayList<>(List.of(
                 new Faculty(1, "Gryffindor", "red"),
                 new Faculty(3, "Gryffindor", "red")
         ));
-        Faculty faculty1 = new Faculty(1, "Gryffindor", "red");
-        Faculty faculty2 = new Faculty(2, "Slytherin", "green");
-        Faculty faculty3 = new Faculty(3, "Gryffindor", "red");
-        Faculty faculty4 = new Faculty(4, "Slytherin", "green");
-        out.addFaculty(faculty1);
-        out.addFaculty(faculty2);
-        out.addFaculty(faculty3);
-        out.addFaculty(faculty4);
-        Assertions.assertThat(out.findByColor("red"))
+        List<Faculty> faculties = List.of(
+                new Faculty(1, "Gryffindor", "red"),
+                new Faculty(3, "Gryffindor", "red")
+        );
+        when(facultyRepository.findByColor("red"))
+                .thenReturn(faculties);
+        assertThat(out.findByColor("red"))
                 .isEqualTo(expected);
     }
 }

@@ -1,6 +1,5 @@
 package ru.hogwarts.school.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
@@ -34,20 +33,17 @@ public class FacultyController {
     }
 
     @PutMapping
-    public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty) {
-        Faculty foundFaculty = facultyService.editFaculty(faculty.getId(), faculty);
-        if (foundFaculty == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        return ResponseEntity.ok(foundFaculty);
+    public Faculty editFaculty(@RequestBody Faculty faculty) {
+        return facultyService.editFaculty(faculty);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteFaculty(@PathVariable long id) {
-        Faculty deleteFaculty = facultyService.deleteFaculty(id);
-        if (deleteFaculty == null) {
+        Faculty foundFaculty = facultyService.findFaculty(id);
+        if (foundFaculty == null) {
             return ResponseEntity.notFound().build();
         }
+        facultyService.deleteFaculty(id);
         return ResponseEntity.ok().build();
     }
 
