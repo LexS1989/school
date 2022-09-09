@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -80,6 +81,26 @@ public class StudentServiceTest {
         when(studentRepository.findByAge(12))
                 .thenReturn(students);
         assertThat(out.findByAge(12))
+                .isEqualTo(expected);
+    }
+
+    @Test
+    public void findByAgeBetweenTest() {
+        int min = 12;
+        int max = 15;
+        List<Student> student = new ArrayList<>(List.of(
+                new Student(1, "Harry", 12),
+                new Student(2, "Ronald", 13),
+                new Student(3, "Draco", 15)
+        ));
+        List<Student> expected = new ArrayList<>(List.of(
+                new Student(1, "Harry", 12),
+                new Student(2, "Ronald", 13),
+                new Student(3, "Draco", 15)
+        ));
+        when(studentRepository.findByAgeBetween(12, 15))
+                .thenReturn(student);
+        assertThat(out.findByAgeBetween(min, max))
                 .isEqualTo(expected);
     }
 }

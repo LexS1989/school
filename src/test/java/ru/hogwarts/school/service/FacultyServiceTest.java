@@ -81,9 +81,19 @@ class FacultyServiceTest {
                 new Faculty(1, "Gryffindor", "red"),
                 new Faculty(3, "Gryffindor", "red")
         );
-        when(facultyRepository.findByColor("red"))
+        when(facultyRepository.findByColorIgnoreCase("red"))
                 .thenReturn(faculties);
         assertThat(out.findByColor("red"))
+                .isEqualTo(expected);
+    }
+
+    @Test
+    public void findFacultyByNameTest() {
+        String nameFaculty = "Slytherin";
+        Faculty expected = new Faculty(2, "Slytherin", "green");
+        when(facultyRepository.findFacultyByNameIgnoreCase(nameFaculty))
+                .thenReturn(expected);
+        assertThat(out.findFacultyByName(nameFaculty))
                 .isEqualTo(expected);
     }
 }
