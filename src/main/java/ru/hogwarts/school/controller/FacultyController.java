@@ -50,28 +50,19 @@ public class FacultyController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
-    public ResponseEntity<Collection<Faculty>> findByColor(@RequestParam String color) {
-        if (color == null || color.isBlank()) {
+    @GetMapping("/nameOrColor")
+    public ResponseEntity<Collection<Faculty>> findByNameOrColor(@RequestParam String nameOrColor) {
+        if (nameOrColor == null || nameOrColor.isBlank()) {
             return ResponseEntity.ok(Collections.emptyList());
         }
-        return ResponseEntity.ok(facultyService.findByColor(color));
+        return ResponseEntity.ok(facultyService.findByNameOrColor(nameOrColor));
     }
 
-    @GetMapping("/findByName")
-    public ResponseEntity<Faculty> findFacultyByName(@RequestParam String name) {
-        if (name.isEmpty() || name.isBlank()) {
+    @GetMapping("/{id}/students")
+    public ResponseEntity<Collection<Student>> findStudentsByFaculty(@PathVariable long id) {
+        if (id == 0) {
             return ResponseEntity.badRequest().build();
         }
-        Faculty foundFaculty = facultyService.findFacultyByName(name);
-        if (foundFaculty == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(foundFaculty);
-    }
-
-    @GetMapping("/studentsFaculty/{id}")
-    public ResponseEntity<Collection<Student>> findStudentsByFaculty(@PathVariable long id) {
         return ResponseEntity.ok(facultyService.findFaculty(id).getStudents());
     }
 }

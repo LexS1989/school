@@ -72,7 +72,7 @@ class FacultyServiceTest {
     }
 
     @Test
-    public void findByAgeTest() {
+    public void findByNameOrColorTestColor() {
         List<Faculty> expected = new ArrayList<>(List.of(
                 new Faculty(1, "Gryffindor", "red"),
                 new Faculty(3, "Gryffindor", "red")
@@ -81,19 +81,9 @@ class FacultyServiceTest {
                 new Faculty(1, "Gryffindor", "red"),
                 new Faculty(3, "Gryffindor", "red")
         );
-        when(facultyRepository.findByColorIgnoreCase("red"))
+        when(facultyRepository.findFacultyByNameIgnoreCaseOrColorIgnoreCase("red", "red"))
                 .thenReturn(faculties);
-        assertThat(out.findByColor("red"))
-                .isEqualTo(expected);
-    }
-
-    @Test
-    public void findFacultyByNameTest() {
-        String nameFaculty = "Slytherin";
-        Faculty expected = new Faculty(2, "Slytherin", "green");
-        when(facultyRepository.findFacultyByNameIgnoreCase(nameFaculty))
-                .thenReturn(expected);
-        assertThat(out.findFacultyByName(nameFaculty))
+        assertThat(out.findByNameOrColor("red"))
                 .isEqualTo(expected);
     }
 }
