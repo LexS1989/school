@@ -63,6 +63,10 @@ public class FacultyController {
         if (id == 0) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(facultyService.findFaculty(id).getStudents());
+        Collection<Student> foundFaculty = facultyService.findFaculty(id).getStudents();
+        if (foundFaculty == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(foundFaculty);
     }
 }
