@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.AvatarService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -29,10 +30,7 @@ public class AvatarController {
         if (avatar.getSize() >= 1024 * 300) {
             return ResponseEntity.badRequest().body("File is to big");
         }
-        Object findStudentId = avatarService.uploadAvatar(studentId, avatar);
-        if (findStudentId == null) {
-            return ResponseEntity.notFound().build();
-        }
+        avatarService.uploadAvatar(studentId, avatar);
         return ResponseEntity.ok().body("Avatar uploaded");
     }
 
@@ -45,11 +43,14 @@ public class AvatarController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(avatar.getMediaType()));
         headers.setContentLength(avatar.getData().length);
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(avatar.getData());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .headers(headers)
+                .body(avatar.getData());
     }
 
     @GetMapping(value = "/{id}/avatar-from-file")
-    public Object downloadAvatar(@PathVariable Long id, HttpServletResponse response) throws IOException{
+    public ResponseEntity<Void> downloadAvatar(@PathVariable Long id, HttpServletResponse response) throws IOException{
         Avatar avatar = avatarService.findAvatar(id);
         if (avatar.getData() == null) {
             return ResponseEntity.notFound().build();

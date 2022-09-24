@@ -29,10 +29,10 @@ public class AvatarService {
         this.studentService = studentService;
     }
 
-    public Object uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
+    public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
         Student student = studentService.findStudent(studentId);
         if (student == null) {
-            return null;
+            return;
         }
         Path filePath = Path.of(avatarsDir, student + "." + getExtensions(avatarFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
@@ -53,7 +53,6 @@ public class AvatarService {
         avatar.setMediaType(avatarFile.getContentType());
         avatar.setData(avatarFile.getBytes());
         avatarRepository.save(avatar);
-        return ResponseEntity.ok().build();
     }
 
     public Avatar findAvatar(Long student_Id) {
