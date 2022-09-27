@@ -119,7 +119,7 @@ class FacultyControllerTest {
         when(facultyRepository.findById(ArgumentMatchers.eq(idNotFound)))
                 .thenReturn(Optional.ofNullable(null));
         when(facultyRepository.findFacultyByNameIgnoreCaseOrColorIgnoreCase(eq(nameIsBlank), eq(nameIsBlank)))
-                .thenReturn(null);
+                .thenReturn(Collections.emptyList());
         when(facultyRepository.findById(idForStudent))
                 .thenReturn(Optional.ofNullable(null));
 

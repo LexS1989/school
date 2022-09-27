@@ -244,6 +244,91 @@ class StudentControllerTest {
                 .isNull();
     }
 
+    @Test
+    public void getCountStudentTest() throws Exception {
+        Student student1 = new Student(1L, "Harry", 12);
+        Student student2 = new Student(2L, "Ronald", 14);
+        Student student3 = new Student(3L, "Hermione", 15);
+        Student student4 = new Student(4L, "Draco", 17);
+
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student1, Student.class);
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student2, Student.class);
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student3, Student.class);
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student4, Student.class);
+
+        int expected = 4;
+
+        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/student/count-student", Integer.class))
+                .isEqualTo(expected);
+    }
+
+    @Test
+    public void getAverageAgeTest() throws Exception {
+        Student student1 = new Student(1L, "Harry", 12);
+        Student student2 = new Student(2L, "Ronald", 12);
+        Student student3 = new Student(3L, "Hermione", 15);
+        Student student4 = new Student(4L, "Draco", 15);
+
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student1, Student.class);
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student2, Student.class);
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student3, Student.class);
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student4, Student.class);
+
+        double expected = 13.5d;
+
+        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/student/average-age", Double.class))
+                .isEqualTo(expected);
+    }
+
+    @Test
+    public void getLastFiveStudentsPositiveTest() throws Exception {
+        Student student1 = new Student(1L, "Harry", 12);
+        Student student2 = new Student(2L, "Ronald", 12);
+        Student student3 = new Student(3L, "Hermione", 12);
+        Student student4 = new Student(4L, "Draco", 12);
+        Student student5 = new Student(5L, "Neville", 12);
+        Student student6 = new Student(6L, "Cedric", 12);
+        Student student7 = new Student(7L, "Gregory", 12);
+
+        Collection<Student> expected = List.of(student7, student6, student5, student4, student3);
+
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student1, Student.class);
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student2, Student.class);
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student3, Student.class);
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student4, Student.class);
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student5, Student.class);
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student6, Student.class);
+        this.restTemplate.postForObject("http://localhost:" + port + "/student/", student7, Student.class);
+
+        ResponseEntity<Collection<Student>> response = restTemplate.exchange(
+                "http://localhost:" + port + "/student/last-students",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<Collection<Student>>() {
+                }
+        );
+
+        Collection<Student> actualResult = response.getBody();
+        assertThat(actualResult)
+                .isEqualTo(expected);
+    }
+
+    @Test
+    public void getLastFiveStudentsNegativeTest() throws Exception {
+        Collection<Student> expected = Collections.emptyList();
+
+        ResponseEntity<Collection<Student>> response = restTemplate.exchange(
+                "http://localhost:" + port + "/student/last-students",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<Collection<Student>>() {
+                }
+        );
+        Collection<Student> actualResult = response.getBody();
+        assertThat(actualResult)
+                .isEqualTo(expected);
+    }
+
     private UriComponentsBuilder getUriBuilder() {
         return UriComponentsBuilder.newInstance()
                 .scheme("http")
