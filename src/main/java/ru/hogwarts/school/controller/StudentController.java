@@ -90,9 +90,6 @@ public class StudentController {
     @GetMapping("/last-students")
     public ResponseEntity<Collection<Student>> getLastFiveStudents() {
         Collection<Student> lastStudents = studentService.fiveLastStudents();
-        if (!lastStudents.isEmpty()) {
-            return ResponseEntity.ok(lastStudents);
-        }
-        return ResponseEntity.ok(Collections.emptyList());
+        return ResponseEntity.ok(lastStudents);
     }
 }
