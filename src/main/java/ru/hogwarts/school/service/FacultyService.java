@@ -7,6 +7,8 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 @Service
 public class FacultyService {
@@ -43,5 +45,20 @@ public class FacultyService {
     public Collection<Faculty> findByNameOrColor(String nameOrColor) {
         logger.debug("Was invoked method for find by name or color");
         return facultyRepository.findFacultyByNameIgnoreCaseOrColorIgnoreCase(nameOrColor, nameOrColor);
+    }
+
+    public String longestName() {
+        return facultyRepository.findAll().stream()
+                .map(e -> e.getName())
+                .max(Comparator.comparing(e -> e.length()))
+                .orElse("Not found elements");
+    }
+
+    public int sum() {
+        int sum = Stream.iterate(1, a -> a +1)
+                .limit(1_000_000)
+                .parallel()
+                .reduce(0, (a, b) -> a + b );
+        return sum;
     }
 }

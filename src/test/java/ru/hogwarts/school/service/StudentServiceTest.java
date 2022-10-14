@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -36,7 +35,8 @@ public class StudentServiceTest {
     @Test
     public void findStudentTest() {
         Student student = new Student(2, "Ronald", 12);
-        Student expected = new Student(2, "Ronald", 12);;
+        Student expected = new Student(2, "Ronald", 12);
+        ;
         when(studentRepository.findById(2L))
                 .thenReturn(Optional.of(student));
         assertThat(out.findStudent(2L))
@@ -65,7 +65,7 @@ public class StudentServiceTest {
     @Test
     public void deleteStudentTest() {
         out.deleteStudent(1L);
-        verify(studentRepository,only()).deleteById(1L);
+        verify(studentRepository, only()).deleteById(1L);
     }
 
     @Test

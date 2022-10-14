@@ -13,7 +13,7 @@ import java.util.Collections;
 @RequestMapping("/student")
 public class StudentController {
 
-    private StudentService studentService;
+    private final StudentService studentService;
 
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
@@ -91,5 +91,19 @@ public class StudentController {
     public ResponseEntity<Collection<Student>> getLastFiveStudents() {
         Collection<Student> lastStudents = studentService.fiveLastStudents();
         return ResponseEntity.ok(lastStudents);
+    }
+
+    @GetMapping("/sorted-list")
+    public ResponseEntity<Collection<String>> sortedNameByFirstLetter() {
+        return ResponseEntity.ok(studentService.findNameByFirstLetter());
+    }
+
+    @GetMapping("/average-age-student")
+    public ResponseEntity<Double> averageAge() {
+        double age = studentService.averageAge();
+        if (age == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(age);
     }
 }

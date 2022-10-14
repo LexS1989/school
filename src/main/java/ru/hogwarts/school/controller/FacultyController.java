@@ -13,7 +13,7 @@ import java.util.Collections;
 @RequestMapping("/faculty")
 public class FacultyController {
 
-    private FacultyService facultyService;
+    private final FacultyService facultyService;
 
     public FacultyController(FacultyService facultyService) {
         this.facultyService = facultyService;
@@ -67,5 +67,15 @@ public class FacultyController {
         }
         Collection<Student> foundFaculty = facultyService.findFaculty(id).getStudents();
         return ResponseEntity.ok(foundFaculty);
+    }
+
+    @GetMapping("/longest-Name-Faculty")
+    public String getLongestNameFaculty() {
+        return facultyService.longestName();
+    }
+
+    @GetMapping("/sum")
+    public int sum() {
+        return facultyService.sum();
     }
 }
