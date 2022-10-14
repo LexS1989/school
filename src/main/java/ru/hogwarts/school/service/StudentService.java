@@ -1,16 +1,20 @@
 package ru.hogwarts.school.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
-    Logger logger = LoggerFactory.getLogger(StudentService.class);
+    private final Logger logger = LoggerFactory.getLogger(StudentService.class);
 
     private final StudentRepository studentRepository;
 
@@ -63,5 +67,21 @@ public class StudentService {
     public Collection<Student> fiveLastStudents() {
         logger.debug("Was invoked method for find get last five students");
         return studentRepository.findLastFiveStudentsById();
+    }
+
+    public Collection<String> findNameByFirstLetter() {
+        return studentRepository.findAll().stream()
+                .map(e -> e.getName())
+                .map(e -> StringUtils.lowerCase(e))
+                .map(e -> StringUtils.capitalize(e))
+                .filter(e -> e.startsWith("А"))
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public double averageAge() {
+        return studentRepository.findAll().stream()
+                .mapToDouble(e -> e.getAge())
+                .average().orElse(0);
     }
 }
