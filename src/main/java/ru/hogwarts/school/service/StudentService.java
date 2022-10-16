@@ -9,7 +9,7 @@ import org.webjars.NotFoundException;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.Collection;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,5 +83,57 @@ public class StudentService {
         return studentRepository.findAll().stream()
                 .mapToDouble(e -> e.getAge())
                 .average().orElse(0);
+    }
+
+    public void threadStudents() {
+        List<String> allStudents = new ArrayList<>();
+
+        studentRepository.findAll().stream()
+                .map(e -> e.getName())
+                .map(e -> allStudents.add(e))
+                .collect(Collectors.toList());
+
+        printNameInConsole(allStudents.get(0));
+        printNameInConsole(allStudents.get(1));
+
+        new Thread(() -> {
+            printNameInConsole(allStudents.get(2));
+            printNameInConsole(allStudents.get(3));
+        }).start();
+
+        new Thread(() -> {
+            printNameInConsole(allStudents.get(4));
+            printNameInConsole(allStudents.get(5));
+        }).start();
+    }
+
+    public void synchronizeThreadStudent(){
+        List<String> allStudents = new ArrayList<>();
+
+        studentRepository.findAll().stream()
+                .map(e -> e.getName())
+                .map(e -> allStudents.add(e))
+                .collect(Collectors.toList());
+
+        printNameInConsoleSynchronize(allStudents.get(0));
+        printNameInConsoleSynchronize(allStudents.get(1));
+
+        new Thread(() -> {
+            printNameInConsoleSynchronize(allStudents.get(2));
+            printNameInConsoleSynchronize(allStudents.get(3));
+        }).start();
+
+        new Thread(() -> {
+            printNameInConsoleSynchronize(allStudents.get(4));
+            printNameInConsoleSynchronize(allStudents.get(5));
+        }).start();
+    }
+
+    public void printNameInConsole(String name) {
+        System.out.println(name);
+    }
+
+    public synchronized void printNameInConsoleSynchronize(String name) {
+        System.out.println(name);
     }
 }
