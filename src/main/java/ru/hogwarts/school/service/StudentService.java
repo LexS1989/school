@@ -115,17 +115,14 @@ public class StudentService {
                 .map(e -> allStudents.add(e))
                 .collect(Collectors.toList());
 
-        printNameInConsoleSynchronize(allStudents.get(0));
-        printNameInConsoleSynchronize(allStudents.get(1));
+        printNameInConsoleSynchronize(allStudents, 0, 1);
 
         new Thread(() -> {
-            printNameInConsoleSynchronize(allStudents.get(2));
-            printNameInConsoleSynchronize(allStudents.get(3));
+            printNameInConsoleSynchronize(allStudents, 2, 3);;
         }).start();
 
         new Thread(() -> {
-            printNameInConsoleSynchronize(allStudents.get(4));
-            printNameInConsoleSynchronize(allStudents.get(5));
+            printNameInConsoleSynchronize(allStudents, 4, 5);;
         }).start();
     }
 
@@ -133,7 +130,9 @@ public class StudentService {
         System.out.println(name);
     }
 
-    public synchronized void printNameInConsoleSynchronize(String name) {
-        System.out.println(name);
+    public synchronized void printNameInConsoleSynchronize(List list, int indexOne, int indexTwo) {
+        String nameOne = (String) list.get(indexOne);
+        String nameTwo = (String) list.get(indexTwo);
+        System.out.println(nameOne + "\n" + nameTwo);
     }
 }
