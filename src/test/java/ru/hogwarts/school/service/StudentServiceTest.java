@@ -36,7 +36,7 @@ public class StudentServiceTest {
     public void findStudentTest() {
         Student student = new Student(2, "Ronald", 12);
         Student expected = new Student(2, "Ronald", 12);
-        ;
+
         when(studentRepository.findById(2L))
                 .thenReturn(Optional.of(student));
         assertThat(out.findStudent(2L))

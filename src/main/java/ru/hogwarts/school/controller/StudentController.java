@@ -106,4 +106,14 @@ public class StudentController {
         }
         return ResponseEntity.ok(age);
     }
+
+    @GetMapping("/print-thread-console")
+    public void printThreadStudentsInConsole() {
+        studentService.threadStudents();
+    }
+
+    @GetMapping("/print-synchronize-thread-console")
+    public void printSynchronizeThreadStudent() {
+        studentService.synchronizeThreadStudent();
+    }
 }
