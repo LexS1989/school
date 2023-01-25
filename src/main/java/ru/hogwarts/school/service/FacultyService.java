@@ -31,7 +31,7 @@ public class FacultyService {
         facultyRepository.deleteById(id);
     }
 
-    public Collection<Faculty> findByColor(String color) {
-        return facultyRepository.findByColor(color);
+    public Collection<Faculty> findByNameOrColor(String nameOrColor) {
+        return facultyRepository.findFacultyByNameIgnoreCaseOrColorIgnoreCase(nameOrColor, nameOrColor);
     }
 }
