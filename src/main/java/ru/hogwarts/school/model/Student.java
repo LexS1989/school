@@ -58,6 +58,10 @@ public class Student {
         return faculty;
     }
 
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
+    }
+
     @Override
     public String toString() {
         return "Student{" +
