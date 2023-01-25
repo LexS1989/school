@@ -1,86 +1,106 @@
 package ru.hogwarts.school.service;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.*;
 
-class StudentServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class StudentServiceTest {
 
-    private final StudentService out = new StudentService();
+    @Mock
+    private StudentRepository studentRepository;
+
+    @InjectMocks
+    private StudentService out;
 
     @Test
     public void addStudentTest() {
-        Student expected = new Student(1, "Harry", 12);
         Student student = new Student(1, "Harry", 12);
-        Assertions.assertThat(out.addStudent(student))
+        Student expected = new Student(1, "Harry", 12);
+        when(studentRepository.save(student))
+                .thenReturn(student);
+        assertThat(out.addStudent(student))
                 .isEqualTo(expected);
     }
 
     @Test
     public void findStudentTest() {
-        Student expected = new Student(2, "Ronald", 12);
-        Student student1 = new Student(1, "Harry", 12);
-        Student student2 = new Student(2, "Ronald", 12);
-        out.addStudent(student1);
-        out.addStudent(student2);
-        Assertions.assertThat(out.findStudent(2))
+        Student student = new Student(2, "Ronald", 12);
+        Student expected = new Student(2, "Ronald", 12);;
+        when(studentRepository.findById(2L))
+                .thenReturn(Optional.of(student));
+        assertThat(out.findStudent(2L))
                 .isEqualTo(expected);
+    }
+
+    @Test
+    public void findStudentNegativeTest() {
+        when(studentRepository.findById(1L))
+                .thenReturn(Optional.empty());
+        assertThat(out.findStudent(1L))
+                .isNull();
     }
 
     @Test
     public void editStudentPositiveTest() {
-        Student student1 = new Student(1, "Harry", 12);
-        Student student2 = new Student(2, "Ron", 12);
+        Student student = new Student(2, "Ron", 12);
         Student expected = new Student(2, "Ronald", 12);
         Student edit = new Student(2, "Ronald", 12);
-        out.addStudent(student1);
-        out.addStudent(student2);
-        Assertions.assertThat(out.editStudent(2, edit))
+        when(studentRepository.save(student))
+                .thenReturn(edit);
+        assertThat(out.editStudent(student))
                 .isEqualTo(expected);
     }
 
     @Test
-    public void editStudentNegativeTest() {
-        Student student = new Student(1, "Harry", 12);
-        out.addStudent(student);
-        Assertions.assertThat(out.editStudent(2, student))
-                .isNull();
-    }
-
-    @Test
     public void deleteStudentTest() {
-        Student student1 = new Student(1, "Harry", 12);
-        Student student2 = new Student(2, "Ron", 12);
-        out.addStudent(student1);
-        out.addStudent(student2);
-        Assertions.assertThat(out.findStudent(2))
-                .isNotNull();
-        out.deleteStudent(2);
-        Assertions.assertThat(out.findStudent(2))
-                .isNull();
+        out.deleteStudent(1L);
+        verify(studentRepository,only()).deleteById(1L);
     }
 
     @Test
     public void findByAgeTest() {
         List<Student> expected = new ArrayList<>(List.of(
                 new Student(1, "Harry", 12),
-                new Student(3, "Ron", 12)
+                new Student(3, "Draco", 12)
         ));
-        Student student1 = new Student(1, "Harry", 12);
-        Student student2 = new Student(2, "Harry", 15);
-        Student student3 = new Student(3, "Ron", 12);
-        Student student4 = new Student(4, "Ron", 15);
-        out.addStudent(student1);
-        out.addStudent(student2);
-        out.addStudent(student3);
-        out.addStudent(student4);
-        Assertions.assertThat(out.findByAge(12))
+        List<Student> students = List.of(
+                new Student(1, "Harry", 12),
+                new Student(3, "Draco", 12)
+        );
+        when(studentRepository.findByAge(12))
+                .thenReturn(students);
+        assertThat(out.findByAge(12))
+                .isEqualTo(expected);
+    }
+
+    @Test
+    public void findByAgeBetweenTest() {
+        int min = 12;
+        int max = 15;
+        List<Student> student = new ArrayList<>(List.of(
+                new Student(1, "Harry", 12),
+                new Student(2, "Ronald", 13),
+                new Student(3, "Draco", 15)
+        ));
+        List<Student> expected = new ArrayList<>(List.of(
+                new Student(1, "Harry", 12),
+                new Student(2, "Ronald", 13),
+                new Student(3, "Draco", 15)
+        ));
+        when(studentRepository.findByAgeBetween(12, 15))
+                .thenReturn(student);
+        assertThat(out.findByAgeBetween(min, max))
                 .isEqualTo(expected);
     }
 }
